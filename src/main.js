@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store/index'
+import 'remixicon/fonts/remixicon.css'
 
 // plugins
 import AtUI from 'at-ui'
@@ -29,4 +30,4 @@ Vue.config.productionTip = false
 // use vue-custom-element
 App.store = store
 App.router = router
-Vue.customElement('vue-widget', App)
+Vue.customElement('weather-widget', App)

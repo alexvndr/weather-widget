@@ -1,39 +1,32 @@
 <template>
   <div id="app">
     <!-- access root props via $root -->
-    <h1 style="text-align: center" v-if="$root.title">{{ $root.title }}</h1>
-
-    <at-menu mode="horizontal" :active-name="activeTab" @on-select="switchTab">
-      <at-menu-item name="list">
-        <i class="icon icon-list"></i>
-        List
-      </at-menu-item>
-      <at-menu-item name="edit">
-        <i class="icon icon-plus-square"></i>
-        Add new
-      </at-menu-item>
-    </at-menu>
-    <br>
-    <router-view />
+    <div class="widget_wrapper" v-show="!settings">
+      <i class="ri-settings-3-line"></i>
+      <div class="widget_content">
+        <div></div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  props: ['title'],
-  data () {
-    return {
-      activeTab: ''
-    }
-  },
+  data: () => ({
+    settings: false,
+  }),
   created () {
     this.activeTab = this.$route.name
   },
   methods: {
     switchTab (tab) {
       this.$router.push({ name: tab })
-    }
+    },
+    showSettings () {
+      this.settings = !this.settings
+    },
   },
+
   watch: {
     '$route.name' () {
       this.activeTab = this.$route.name
