@@ -1,7 +1,59 @@
 #app {
   padding: 20px;
-}
-
-.at-btn + .at-btn {
-  margin-left: 0.5rem;
+  width: 250px;
+  position: fixed;
+  right: 50px;
+  top: 50px;
+  background: #f2f2f5;
+  border-radius: 4px;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+  .widget_wrapper {
+    .settings {
+      position: absolute;
+      right: 20px;
+      cursor: pointer;
+    }
+    .widget_content {
+      display: flex;
+      flex-flow: column;
+      .header {
+        font-weight: 600;
+      }
+      .main-info {
+        display: flex;
+        align-items: center;
+        p {
+          font-size: 25px;
+          font-weight: 600;
+        }
+      }
+      .sub-info {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 5px;
+      }
+      .w_p {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+        .wind, .pressure {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          i {
+            margin-right: 5px;
+          }
+          p {
+            margin: 0 3px;
+            color: gray;
+          }
+        }
+      }
+      .extra {
+        display: flex;
+        justify-content: space-between;
+      }
+    }
+  }
 }

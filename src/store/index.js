@@ -1,14 +1,15 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import getters from './getters'
+import mutations from './mutations'
 
 Vue.use(Vuex)
 
-export default state = () => ({
-  cities: [],
+export default new Vuex.Store({
+  state: {
+    city: {},
+    currentCity: '',
+  },
+  getters,
+  mutations
 })
-
-export const getters = {
-  getCities(state) {
-    return state.cities
-  }
-}
