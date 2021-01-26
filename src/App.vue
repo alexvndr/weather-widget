@@ -2,33 +2,70 @@
   <div id="app">
     <!-- access root props via $root -->
     <div class="widget_wrapper" v-show="!settings">
-      <i class="ri-settings-3-line settings"></i>
-      <div class="widget_content">
+      <i class="ri-settings-3-line settings" @click="showSettings"></i>
+
+      <!-- CONTENT -->
+
+      <div class="widget_content" v-for="city in cities" :key="city.id">
         <div class="header">
-          {{getCity.name ? getCity.name : 'City'}}, {{getCity.sys ? getCity.sys.country : 'Country'}}
+          {{city.name ? city.name : 'City'}}, {{city.sys ? city.sys.country : 'Country'}}
         </div>
         <div class="main-info">
-          <img :src="`http://openweathermap.org/img/wn/${getCity.weather ? getCity.weather[0].icon : '01d'}@2x.png`" :alt="getCity.weather ? getCity.weather[0].main : 'Icon'">
-          <p>{{getCity.main ? getCity.main.temp + '°C' : '0°C'}}</p>
+          <img :src="`http://openweathermap.org/img/wn/${city.weather ? city.weather[0].icon : '01d'}@2x.png`" :alt="city.weather ? city.weather[0].main : 'Icon'">
+          <p>{{city.main ? city.main.temp + '°C' : '0°C'}}</p>
         </div>
         <div class="sub-info">
-          <p>Feels like {{getCity.main ? getCity.main.feels_like + '°C' : '0°C'}}</p>
-          <p>{{getCity.weather ? getCity.weather[0].main : 'Clear'}}</p>
+          <p>Feels like {{city.main ? city.main.feels_like + '°C' : '0°C'}}</p>
+          <p>{{city.weather ? city.weather[0].main : 'Clear'}}</p>
         </div>
         <div class="w_p">
           <div class="wind">
-            <i class="ri-compass-discover-fill"></i>
-            <p>{{getCity.wind ? getCity.wind.speed + 'm/s' : '0m/s'}}</p>
+            <i class="ri-navigation-fill"></i>
+            <p>{{city.wind ? city.wind.speed + 'm/s' : '0m/s'}}</p>
             <p>{{getDirection}}</p>
           </div>
           <div class="pressure">
             <i class="ri-compass-4-line"></i>
-            {{getCity.main ? getCity.main.pressure + 'hPa' : '0hPa'}}
+            {{city.main ? city.main.pressure + 'hPa' : '0hPa'}}
           </div>
         </div>
         <div class="extra">
-          <p>Humidity: {{getCity.main ? getCity.main.humidity + '%' : '0%'}}</p>
-          <p>Visibility: {{getCity.visibility ? getCity.visibility + 'm' : '0m'}}</p>
+          <p>Humidity: {{city.main ? city.main.humidity + '%' : '0%'}}</p>
+          <p>Visibility: {{city.visibility ? city.visibility + 'm' : '0m'}}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+
+    <div class="widget_settings" v-show="settings">
+      <div>
+        <i class="ri-close-line close_btn" @click="showSettings"></i>
+        <div class="header">
+          Settings
+        </div>
+        <draggable 
+          :list="cities"
+          :disabled="!enabled"
+          class="list-group"
+          ghost-class="ghost"
+          @start="dragging = true && checkMove"
+          @end="dragging = false"
+          @change="checkMove">
+            <div class="widget_content" v-for="(city) in cities" :key="city.id" id="listItem">
+              <i class="ri-menu-line"></i>
+              <p>{{city.name ? city.name : 'City'}}, {{city.sys ? city.sys.country : 'Country'}}</p>
+              <i class="ri-delete-bin-line" @click="removeCity(city.id)"></i>
+            </div>
+        </draggable>
+      </div>
+      <div class="widget_add">
+        <div class="input">
+          <label for="add">Add Location:</label>
+          <input type="text" id="add" v-model="cityToAdd">
+        </div>
+        <div class="enter">
+          <i class="ri-arrow-go-back-fill ri-xl" @click="addNew"></i>
         </div>
       </div>
     </div>
@@ -41,15 +78,34 @@ import {
   mapActions,
   mapMutations
 } from "vuex";
+import draggable from "@/vuedraggable";
 export default {
-  data: () => ({
-    settings: false,
-  }),
+  components: {
+    draggable,
+  },
+  data() {
+    return {
+      settings: false,
+      cityToAdd: '',
+      enabled: true,
+      cities: []
+    }
+  },
   computed: {
     ...mapGetters([
         'getCity',
         'getCurrentCity',
+        'getCities',
     ]),
+    dragOptions() {
+      return {
+        animation: 200,
+        group: "description",
+        disabled: false,
+        ghostClass: "ghost",
+        dragging: false
+      };
+    },
     getDirection() {
       var deg = this.getCity.wind ? this.getCity.wind.deg : '0'
       if (deg>11.25 && deg<=33.75){
@@ -85,16 +141,36 @@ export default {
       }else{
         return "N"; 
       }
-    }
+    },
   },
   methods: {
     ...mapMutations([
       'fetchCity',
-      'fetchCurrentCity'
+      'fetchCurrentCity',
+      'addCity',
+      'removeCity',
+      'checkMove'
     ]),
+    showSettings() {
+      this.settings = !this.settings;
+    },
+    addNew() {
+      if (this.cityToAdd.length > 0) {
+        this.addCity(this.cityToAdd);
+        this.cityToAdd = '';
+      }
+    },
   },
   mounted() {
-    this.fetchCurrentCity();
+
+    this.cities = this.getCities;
+    
+    if (localStorage.getItem('CITIES') === null){
+      localStorage.setItem('CITIES', JSON.stringify([]))
+    }
+    if (this.getCities.length === 0) {
+      this.fetchCurrentCity()
+    }
   },  
 }
 </script>
