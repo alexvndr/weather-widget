@@ -11,7 +11,6 @@ export default {
     },
 
     checkMove(state) {
-        console.log('CITIES', state.cities)
         localStorage.setItem('CITIES', JSON.stringify(state.cities));
     },
 
